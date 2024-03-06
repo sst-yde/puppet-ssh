@@ -10,7 +10,7 @@ class ssh::server::config {
 
   case $ssh::server::validate_sshd_file {
     true: {
-      $sshd_validate_cmd = '/usr/sbin/sshd -tf %'
+      $sshd_validate_cmd = $ssh::server::sshd_validate_cmd
     }
     default: {
       $sshd_validate_cmd = undef
@@ -26,9 +26,9 @@ class ssh::server::config {
   } else {
     concat { $ssh::server::sshd_config:
       ensure       => present,
-      owner        => 0,
-      group        => 0,
-      mode         => '0600',
+      owner        => $ssh::server::sshd_config_owner,
+      group        => $ssh::server::sshd_config_group,
+      mode         => $ssh::server::sshd_config_mode,
       validate_cmd => $sshd_validate_cmd,
       notify       => Service[$ssh::server::service_name],
     }
@@ -43,9 +43,9 @@ class ssh::server::config {
   if $ssh::server::use_issue_net {
     file { $ssh::server::issue_net:
       ensure  => file,
-      owner   => 0,
-      group   => 0,
-      mode    => '0644',
+      owner   => $ssh::server::issue_net_owner,
+      group   => $ssh::server::issue_net_group,
+      mode    => $ssh::server::issue_net_mode,
       content => template("${module_name}/issue.net.erb"),
       notify  => Service[$ssh::server::service_name],
     }

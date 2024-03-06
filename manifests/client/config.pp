@@ -18,9 +18,9 @@ class ssh::client::config {
   } else {
     concat { $ssh::client::ssh_config:
       ensure => present,
-      owner  => 0,
-      group  => 0,
-      mode   => '0644',
+      owner  => $ssh::client::ssh_config_owner,
+      group  => $ssh::client::ssh_config_group,
+      mode   => $ssh::client::ssh_config_mode,
     }
 
     concat::fragment { 'ssh_config global config':

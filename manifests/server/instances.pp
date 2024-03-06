@@ -25,15 +25,27 @@
 # @param sshd_environments_file
 #   Path to environments file, if any
 #
+# @param sshd_instance_config_file_owner
+#   Owner of the instance sshd config file
+#
+# @param sshd_instance_config_file_group
+#   Group of the instance sshd config file
+#
+# @param sshd_instance_config_file_mode
+#   Mode of the instance sshd config file
+#
 define ssh::server::instances (
-  Enum[present, absent]          $ensure                    = present,
-  Hash                           $options                   = {},
-  Stdlib::Ensure::Service        $service_ensure            = $ensure ? { 'present' => 'running', 'absent' => 'stopped' },
-  Boolean                        $service_enable            = ($service_ensure == 'running'),
-  Boolean                        $validate_config_file      = false,
-  Stdlib::Absolutepath           $sshd_instance_config_file = "${ssh::server::sshd_dir}/sshd_config.${title}",
-  Stdlib::Absolutepath           $sshd_binary               = $ssh::server::sshd_binary,
-  Optional[Stdlib::Absolutepath] $sshd_environments_file    = $ssh::server::sshd_environments_file,
+  Enum[present, absent]                 $ensure                          = present,
+  Hash                                  $options                         = {},
+  Stdlib::Ensure::Service               $service_ensure                  = $ensure ? { 'present' => 'running', 'absent' => 'stopped' },
+  Boolean                               $service_enable                  = ($service_ensure == 'running'),
+  Boolean                               $validate_config_file            = false,
+  Stdlib::Absolutepath                  $sshd_instance_config_file       = "${ssh::server::sshd_dir}/sshd_config.${title}",
+  Stdlib::Absolutepath                  $sshd_binary                     = $ssh::server::sshd_binary,
+  Optional[Stdlib::Absolutepath]        $sshd_environments_file          = $ssh::server::sshd_environments_file,
+  Optional[Variant[Integer, String[1]]] $sshd_instance_config_file_owner = 0,
+  Optional[Variant[Integer, String[1]]] $sshd_instance_config_file_group = 0,
+  Optional[String[1]]                   $sshd_instance_config_file_mode  = '0600',
 ) {
   include ssh::server
 
@@ -53,9 +65,9 @@ define ssh::server::instances (
 
     concat { $sshd_instance_config_file:
       ensure       => $ensure,
-      owner        => 0,
-      group        => 0,
-      mode         => '0600',
+      owner        => $sshd_instance_config_file_owner,
+      group        => $sshd_instance_config_file_group,
+      mode         => $sshd_instance_config_file_mode,
       validate_cmd => $validate_cmd,
       notify       => Service["${title}.service"],
     }

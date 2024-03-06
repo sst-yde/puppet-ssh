@@ -1,0 +1,16 @@
+---
+ssh::server::host_priv_key_owner: 'Administrator'
+ssh::server::host_priv_key_mode: '0600'
+ssh::server::sshd_config_owner: 'Administrator'
+ssh::server::sshd_config_mode: '0600'
+ssh::server::issue_net_owner: 'Administrator'
+ssh::server::issue_net_mode: '0644'
+ssh::client::ssh_config_owner: 'Administrator'
+ssh::client::ssh_config_mode: '0644'
+
+ssh::server::service_name: 'sshd'
+
+ssh::server::default_options:
+  Subsystem: 'sftp sftp-server.exe'
+
+ssh::client::default_options: {}

@@ -11,6 +11,9 @@
 # @param ssh_config
 #   Path to ssh client config file
 #
+# @param default_options
+#   Default options to set, will be merged with options parameter
+#
 # @param client_package_name
 #   Name of the client package
 #
@@ -29,22 +32,31 @@
 # @param options_absent
 #   Remove options (with augeas style)
 #
-# @param default_options
-#   Default options to set, will be merged with options parameter
-#
 # @param match_block
 #   Add ssh match_block (with concat)
 #
+# @param ssh_config_owner
+#   Owner of the ssh_config file
+#
+# @param ssh_config_group
+#   Group of the ssh_config file
+#
+# @param ssh_config_mode
+#   Mode of the ssh_config file
+#
 class ssh::client (
-  Stdlib::Absolutepath $ssh_config,
-  Hash                 $default_options,
-  Optional[String[1]]  $client_package_name  = undef,
-  String               $ensure               = present,
-  Boolean              $storeconfigs_enabled = true,
-  Hash                 $options              = {},
-  Boolean              $use_augeas           = false,
-  Array                $options_absent       = [],
-  Hash                 $match_block          = {},
+  Stdlib::Absolutepath                  $ssh_config,
+  Hash                                  $default_options,
+  Optional[String[1]]                   $client_package_name  = undef,
+  String                                $ensure               = present,
+  Boolean                               $storeconfigs_enabled = true,
+  Hash                                  $options              = {},
+  Boolean                               $use_augeas           = false,
+  Array                                 $options_absent       = [],
+  Hash                                  $match_block          = {},
+  Optional[Variant[Integer, String[1]]] $ssh_config_owner     = undef,
+  Optional[Variant[Integer, String[1]]] $ssh_config_group     = undef,
+  Optional[String[1]]                   $ssh_config_mode      = undef,
 ) {
   if $use_augeas {
     $merged_options = sshclient_options_to_augeas_ssh_config($options, $options_absent, { 'target' => $ssh_config })

@@ -1,8 +1,33 @@
 ---
+ssh::server::host_priv_key_owner: 0
+ssh::server::host_priv_key_group: 0
+ssh::server::host_priv_key_mode: '0600'
+ssh::server::sshd_config_owner: 0
+ssh::server::sshd_config_group: 0
+ssh::server::sshd_config_mode: '0600'
+ssh::server::issue_net_owner: 0
+ssh::server::issue_net_group: 0
+ssh::server::issue_net_mode: '0644'
+ssh::client::ssh_config_owner: 0
+ssh::client::ssh_config_group: 0
+ssh::client::ssh_config_mode: '0644'
+
 ssh::server::sshd_dir: '/etc/ssh'
 ssh::server::sshd_binary: '/usr/local/sbin/sshd'
 ssh::server::sshd_config: '/etc/ssh/sshd_config'
 ssh::client::ssh_config: '/etc/ssh/ssh_config'
 ssh::server::service_name: 'sshd'
 ssh::sftp_server_path: '/usr/libexec/sftp-server'
-ssh::server::host_priv_key_group: 0
+
+ssh::server::default_options:
+  ChallengeResponseAuthentication: 'no'
+  X11Forwarding: 'yes'
+  PrintMotd: 'no'
+  AcceptEnv: 'LANG LC_*'
+  Subsystem: "sftp %{lookup('ssh::sftp_server_path')}"
+  UsePAM: 'yes'
+
+ssh::client::default_options:
+  'Host *':
+    SendEnv: 'LANG LC_*'
+    HashKnownHosts: 'yes'
